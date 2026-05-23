@@ -2,146 +2,232 @@ name: Fasel DB Scraper
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # كل 10 دقائق
-  workflow_dispatch:           # تشغيل يدوي
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+
   scrape-movies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl movies
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update movies [skip ci]"
-          file_pattern: "data/movies.json"
+          name: movies
+          path: data/movies.json
+          if-no-files-found: ignore
+
   scrape-series:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl series
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update series [skip ci]"
-          file_pattern: "data/series.json"
+          name: series
+          path: data/series.json
+          if-no-files-found: ignore
+
   scrape-hindi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl hindi
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update hindi [skip ci]"
-          file_pattern: "data/hindi.json"
+          name: hindi
+          path: data/hindi.json
+          if-no-files-found: ignore
+
   scrape-asian-movies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl asian_movies
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update asian_movies [skip ci]"
-          file_pattern: "data/asian_movies.json"
+          name: asian_movies
+          path: data/asian_movies.json
+          if-no-files-found: ignore
+
   scrape-anime-movies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl anime_movies
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update anime_movies [skip ci]"
-          file_pattern: "data/anime_movies.json"
+          name: anime_movies
+          path: data/anime_movies.json
+          if-no-files-found: ignore
+
   scrape-asian-series:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl asian_series
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update asian_series [skip ci]"
-          file_pattern: "data/asian_series.json"
+          name: asian_series
+          path: data/asian_series.json
+          if-no-files-found: ignore
+
   scrape-tvshows:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl tvshows
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update tvshows [skip ci]"
-          file_pattern: "data/tvshows.json"
+          name: tvshows
+          path: data/tvshows.json
+          if-no-files-found: ignore
+
   scrape-anime:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run spider
         run: cd fasel && scrapy crawl anime
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "db: update anime [skip ci]"
-          file_pattern: "data/anime.json"
+          name: anime
+          path: data/anime.json
+          if-no-files-found: ignore
+
+  commit-all:
+    runs-on: ubuntu-latest
+    needs: [scrape-movies, scrape-series, scrape-hindi, scrape-asian-movies, scrape-anime-movies, scrape-asian-series, scrape-tvshows, scrape-anime]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: data/
+
+      - name: Flatten artifact folders
+        run: |
+          # actions/download-artifact@v4 ينزل كل artifact في مجلد باسمه
+          # نحرك الـ JSON للمكان الصحيح
+          for dir in data/*/; do
+            name=$(basename "$dir")
+            if [ -f "$dir/$name.json" ]; then
+              mv "$dir/$name.json" "data/$name.json"
+              rmdir "$dir"
+            fi
+          done
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/*.json
+          if git diff --cached --quiet; then
+            echo "✅ لا يوجد تغييرات جديدة"
+          else
+            git commit -m "db: update [skip ci]"
+            git push
+          fi
