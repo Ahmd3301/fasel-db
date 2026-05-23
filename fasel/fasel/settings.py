@@ -5,7 +5,6 @@ NEWSPIDER_MODULE = "fasel.spiders"
 
 ROBOTSTXT_OBEY = False
 
-# تأدب مع الموقع
 DOWNLOAD_DELAY           = 0.75
 RANDOMIZE_DOWNLOAD_DELAY = True
 CONCURRENT_REQUESTS      = 4
@@ -16,7 +15,6 @@ USER_AGENT = (
     "Chrome/124.0.0.0 Safari/537.36"
 )
 
-# Headers إضافية تحاكي المتصفح
 DEFAULT_REQUEST_HEADERS = {
     "Accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "ar-AR,ar;q=0.9,en;q=0.8",
@@ -26,10 +24,19 @@ ITEM_PIPELINES = {
     "fasel.pipelines.FaselPipeline": 300,
 }
 
-LOG_LEVEL = "INFO"
-FEEDS     = {}
+# ── إصلاح Scrapy 2.16: تعطيل StartSpiderMiddleware ──────────────
+# هذا الـ middleware الجديد يتجاهل start_requests عندما start_urls فارغ
+SPIDER_MIDDLEWARES = {
+    "scrapy.spidermiddlewares.start.StartSpiderMiddleware": None,
+    "scrapy.spidermiddlewares.httperror.HttpErrorMiddleware": 50,
+    "scrapy.spidermiddlewares.offsite.OffsiteMiddleware":    500,
+    "scrapy.spidermiddlewares.referer.RefererMiddleware":    700,
+    "scrapy.spidermiddlewares.urllength.UrlLengthMiddleware": 800,
+    "scrapy.spidermiddlewares.depth.DepthMiddleware":        900,
+}
 
-# تجنب حظر الـ IP
-RETRY_TIMES          = 3
-RETRY_HTTP_CODES     = [500, 502, 503, 504, 408, 429]
-DOWNLOAD_TIMEOUT     = 20
+LOG_LEVEL        = "INFO"
+FEEDS            = {}
+RETRY_TIMES      = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 429]
+DOWNLOAD_TIMEOUT = 20

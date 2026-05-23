@@ -9,16 +9,16 @@ _ROOT = os.path.abspath(os.path.join(_HERE, "..", "..", "..", "data"))
 
 class FaselBaseSpider(scrapy.Spider):
 
-    base_url = ""
-    category = ""
+    base_url  = ""
+    category  = ""
+    start_urls = ["http://placeholder.invalid"]  # مطلوب لـ Scrapy 2.16
 
     def start_requests(self):
-        """متوافق مع Scrapy 2.11+ و 2.16+"""
         self.db_path       = os.path.join(_ROOT, f"{self.category}.json")
         self.is_full_crawl = not os.path.exists(self.db_path)
         self.seen_links    = set()
 
-        self.logger.info(f"[{self.category}] ROOT = {_ROOT}")
+        self.logger.info(f"[{self.category}] start_requests called ✓")
         self.logger.info(f"[{self.category}] db_path = {self.db_path}")
         self.logger.info(f"[{self.category}] is_full_crawl = {self.is_full_crawl}")
 
@@ -30,17 +30,14 @@ class FaselBaseSpider(scrapy.Spider):
                     data = []
             if not data:
                 self.is_full_crawl = True
-                self.logger.info(f"[{self.category}] الملف فارغ → full crawl")
             else:
                 self.seen_links = {item["link"] for item in data}
                 self.logger.info(
                     f"[{self.category}] وضع المقارنة — {len(self.seen_links)} عمل"
                 )
-        else:
-            self.logger.info(f"[{self.category}] أول تشغيل — سحب كامل")
 
         target = f"{self.base_url}/page/1"
-        self.logger.info(f"[{self.category}] طلب: {target}")
+        self.logger.info(f"[{self.category}] → {target}")
 
         yield scrapy.Request(
             url=target,
@@ -54,24 +51,14 @@ class FaselBaseSpider(scrapy.Spider):
         cards = response.css("#postList .postDiv")
 
         self.logger.info(
-            f"[{self.category}] page/{page} — status={response.status} "
-            f"url={response.url} cards={len(cards)}"
+            f"[{self.category}] page/{page} "
+            f"status={response.status} cards={len(cards)}"
         )
 
         if not cards:
-            # جرّب selectors بديلة
-            alt = response.css(".postDiv")
             self.logger.info(
-                f"[{self.category}] .postDiv بدون # = {len(alt)}"
-            )
-            all_divs = response.css("div[class*='post']")
-            self.logger.info(
-                f"[{self.category}] div[class*=post] = {len(all_divs)}"
-            )
-            # اطبع أول 500 حرف من الـ HTML للتشخيص
-            self.logger.info(
-                f"[{self.category}] HTML snippet: "
-                f"{response.text[:500].replace(chr(10), ' ')}"
+                f"[{self.category}] HTML[500]: "
+                f"{response.text[:500].replace(chr(10),' ')}"
             )
             return
 
@@ -107,6 +94,4 @@ class FaselBaseSpider(scrapy.Spider):
                 dont_filter=True,
             )
         else:
-            self.logger.info(
-                f"[{self.category}] توقف ذكي عند page/{page}"
-            )
+            self.logger.info(f"[{self.category}] توقف ذكي عند page/{page}")
