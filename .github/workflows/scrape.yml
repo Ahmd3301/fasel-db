@@ -29,7 +29,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: movies
+          name: data-movies
           path: data/movies.json
           if-no-files-found: ignore
 
@@ -52,7 +52,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: series
+          name: data-series
           path: data/series.json
           if-no-files-found: ignore
 
@@ -75,7 +75,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hindi
+          name: data-hindi
           path: data/hindi.json
           if-no-files-found: ignore
 
@@ -98,7 +98,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: asian_movies
+          name: data-asian_movies
           path: data/asian_movies.json
           if-no-files-found: ignore
 
@@ -121,7 +121,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: anime_movies
+          name: data-anime_movies
           path: data/anime_movies.json
           if-no-files-found: ignore
 
@@ -144,7 +144,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: asian_series
+          name: data-asian_series
           path: data/asian_series.json
           if-no-files-found: ignore
 
@@ -167,7 +167,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tvshows
+          name: data-tvshows
           path: data/tvshows.json
           if-no-files-found: ignore
 
@@ -190,7 +190,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: anime
+          name: data-anime
           path: data/anime.json
           if-no-files-found: ignore
 
@@ -206,28 +206,28 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: data/
+          path: artifacts/
 
-      - name: Flatten artifact folders
+      - name: Move JSON files to data/
         run: |
-          # actions/download-artifact@v4 ينزل كل artifact في مجلد باسمه
-          # نحرك الـ JSON للمكان الصحيح
-          for dir in data/*/; do
-            name=$(basename "$dir")
-            if [ -f "$dir/$name.json" ]; then
-              mv "$dir/$name.json" "data/$name.json"
-              rmdir "$dir"
-            fi
+          mkdir -p data
+          # كل artifact ينزل في مجلد باسمه: artifacts/data-movies/movies.json
+          find artifacts/ -name "*.json" | while read f; do
+            filename=$(basename "$f")
+            mv "$f" "data/$filename"
+            echo "moved: $filename"
           done
 
       - name: Commit and push
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/*.json
+          git add data/
           if git diff --cached --quiet; then
             echo "✅ لا يوجد تغييرات جديدة"
           else
-            git commit -m "db: update [skip ci]"
+            COUNT=$(git diff --cached --numstat | wc -l)
+            git commit -m "db: update $COUNT categories [skip ci]"
             git push
+            echo "✅ تم الحفظ بنجاح"
           fi
