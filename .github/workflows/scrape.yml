@@ -1,0 +1,147 @@
+name: Fasel DB Scraper
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # كل 10 دقائق
+  workflow_dispatch:           # تشغيل يدوي
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-movies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl movies
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update movies [skip ci]"
+          file_pattern: "data/movies.json"
+  scrape-series:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl series
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update series [skip ci]"
+          file_pattern: "data/series.json"
+  scrape-hindi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl hindi
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update hindi [skip ci]"
+          file_pattern: "data/hindi.json"
+  scrape-asian-movies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl asian_movies
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update asian_movies [skip ci]"
+          file_pattern: "data/asian_movies.json"
+  scrape-anime-movies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl anime_movies
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update anime_movies [skip ci]"
+          file_pattern: "data/anime_movies.json"
+  scrape-asian-series:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl asian_series
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update asian_series [skip ci]"
+          file_pattern: "data/asian_series.json"
+  scrape-tvshows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl tvshows
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update tvshows [skip ci]"
+          file_pattern: "data/tvshows.json"
+  scrape-anime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run spider
+        run: cd fasel && scrapy crawl anime
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "db: update anime [skip ci]"
+          file_pattern: "data/anime.json"
