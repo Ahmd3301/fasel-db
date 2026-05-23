@@ -24,15 +24,9 @@ ITEM_PIPELINES = {
     "fasel.pipelines.FaselPipeline": 300,
 }
 
-# ── إصلاح Scrapy 2.16: تعطيل StartSpiderMiddleware ──────────────
-# هذا الـ middleware الجديد يتجاهل start_requests عندما start_urls فارغ
+# تعطيل StartSpiderMiddleware فقط
 SPIDER_MIDDLEWARES = {
     "scrapy.spidermiddlewares.start.StartSpiderMiddleware": None,
-    "scrapy.spidermiddlewares.httperror.HttpErrorMiddleware": 50,
-    "scrapy.spidermiddlewares.offsite.OffsiteMiddleware":    500,
-    "scrapy.spidermiddlewares.referer.RefererMiddleware":    700,
-    "scrapy.spidermiddlewares.urllength.UrlLengthMiddleware": 800,
-    "scrapy.spidermiddlewares.depth.DepthMiddleware":        900,
 }
 
 LOG_LEVEL        = "INFO"
